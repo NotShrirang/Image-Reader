@@ -1,0 +1,43 @@
+import subprocess
+from tkinter import *
+from tkinter import ttk
+from tkinter import filedialog
+import numpy as np
+import cv2
+import pyautogui
+import time
+from pytesseract import pytesseract
+from PIL import Image
+
+root = Tk()
+root.title('Tkinter App')
+
+main_frame = Frame(root, borderwidth=1, relief=SOLID)
+main_frame.pack()
+
+def screenCapture():
+    root.withdraw()
+    time.sleep(1)
+    image = pyautogui.screenshot()
+    image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    filename = filedialog.asksaveasfilename(initialdir="", filetypes=(("png files", "*.png"),))
+    if(filename!=""):
+        filename = filename.replace(".png", "")
+        cv2.imwrite(f"{filename}.png", image)
+        imgToText(filename)
+    root.deiconify()
+
+def imgToText(filename):
+    path_to_tesseract = r"C:\\Program Files\\Tesseract-OCR\\tesseract"
+    image_path = f"{filename}.png"
+    img = Image.open(image_path)
+    pytesseract.tesseract_cmd = path_to_tesseract
+    text = pytesseract.image_to_string(img)
+    entry = Text(root, font=("Halvetica", 16), height=100, width=100)
+    entry.pack(padx=10, pady=10)
+    entry.insert(END, text)
+
+button1= Button(main_frame, text="Capture", command=screenCapture)
+button1.pack(padx=10, pady=10)
+
+root.mainloop()
