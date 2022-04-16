@@ -3,7 +3,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 import numpy as np
-import cv2
+import cv2 as cv2
 import pyautogui
 import time
 from pytesseract import pytesseract
@@ -14,6 +14,29 @@ root.title('Tkinter App')
 
 main_frame = Frame(root, borderwidth=1, relief=SOLID)
 main_frame.pack()
+
+def picCapture():
+    pic = cv2.VideoCapture(0)
+    result, image = pic.read()
+    if result:
+        # print(image)
+        # cv2.imshow("GeeksForGeeks", image) 
+        cv2.imwrite("Image.png", image)
+        imgToText("image")
+        # cv2.waitKey(0)
+        # cv2.destroyWindow("GeeksForGeeks")
+
+def showCam():
+    vid = cv2.VideoCapture(0)
+  
+    while(True):
+        ret, frame = vid.read()
+        cv2.imshow('frame', frame)
+        if cv2.waitKey(1) & 0xFF == ord('c'):
+            picCapture()
+            break
+    vid.release()
+    cv2.destroyAllWindows()
 
 def screenCapture():
     root.withdraw()
@@ -37,7 +60,10 @@ def imgToText(filename):
     entry.pack(padx=10, pady=10)
     entry.insert(END, text)
 
-button1= Button(main_frame, text="Capture", command=screenCapture)
+button1= Button(main_frame, text="Take Screenshot", command=screenCapture)
 button1.pack(padx=10, pady=10)
+
+button2= Button(main_frame, text="Take Picture", command=showCam)
+button2.pack(padx=10, pady=10)
 
 root.mainloop()
